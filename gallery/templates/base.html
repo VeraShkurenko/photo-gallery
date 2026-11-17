@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Фотогалерея{% endblock %} — Фотогалерея</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('main.index') }}">📷 Фотогалерея</a>
+  <nav>
+    <a href="{{ url_for('main.index') }}">Головна</a>
+    <a href="{{ url_for('main.stats') }}">Статистика</a>
+    {% if current_user %}
+      <a href="{{ url_for('main.post_new') }}">+ Новий пост</a>
+      {% if current_user.role == 'admin' %}<a href="{{ url_for('main.moderation') }}">Модерація</a>{% endif %}
+      <span class="who">{{ current_user.username }}{% if current_user.role == 'admin' %} (admin){% endif %}</span>
+      <form method="post" action="{{ url_for('main.logout') }}" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="link">Вийти</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('main.login') }}">Увійти</a>
+      <a href="{{ url_for('main.register') }}">Реєстрація</a>
+    {% endif %}
+  </nav>
+</header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">Фотогалерея | {{ student_name }} | {{ hostname }}</footer>
+</body>
+</html>

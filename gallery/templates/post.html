@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<article class="post">
+  {% if post.status == 'pending' %}<div class="flash info">Статус: очікує на модерацію (pending)</div>{% endif %}
+  <h1>{{ post.title }}</h1>
+  <div class="meta">Автор: <b>{{ post.author }}</b> · Категорія: {{ post.category }} ·
+    {{ post.created_at.strftime('%d.%m.%Y %H:%M') }} UTC</div>
+  <a href="{{ image_url(post.s3_key) }}" target="_blank"><img class="full" src="{{ image_url(post.s3_key) }}" alt="{{ post.title }}"></a>
+  {% if post.description %}<p class="desc">{{ post.description }}</p>{% endif %}
+  <div class="actions">
+    <span class="likes">♥ Лайків: <b>{{ post.likes }}</b></span>
+    {% if current_user %}
+      <form method="post" action="{{ url_for('main.post_like', post_id=post.id) }}" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">{% if liked %}♥ Вже вподобано (ще раз){% else %}♥ Подобається{% endif %}</button>
+      </form>
+      <form method="post" action="{{ url_for('main.post_delete', post_id=post.id) }}" class="inline"
+            onsubmit="return confirm('Видалити пост?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="danger">Видалити</button>
+      </form>
+    {% endif %}
+  </div>
+  <section id="comments">
+    <h2>Коментарі ({{ comments|length }})</h2>
+    {% for c in comments %}
+      <div class="comment"><b>{{ c.author }}</b> <small>{{ c.created_at.strftime('%d.%m.%Y %H:%M') }}</small><p>{{ c.text }}</p></div>
+    {% else %}<p class="empty">Коментарів ще немає.</p>{% endfor %}
+    {% if current_user %}
+      <form method="post" action="{{ url_for('main.post_comment', post_id=post.id) }}">
+        {% if comment_error %}<div class="error">{{ comment_error }}</div>{% endif %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <textarea name="text" rows="3" placeholder="Ваш коментар" required></textarea>
+        <button type="submit">Коментувати</button>
+      </form>
+    {% else %}
+      <p><a href="{{ url_for('main.login', next=request.path) }}">Увійдіть</a>, щоб коментувати й ставити лайки.</p>
+    {% endif %}
+  </section>
+</article>
+{% endblock %}

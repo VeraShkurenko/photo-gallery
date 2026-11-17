@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<h1>Статистика</h1>
+<div class="stats">
+  <section>
+    <h2>Топ-5 постів за лайками</h2>
+    <table><tr><th>#</th><th>Пост</th><th>Автор</th><th>♥</th></tr>
+    {% for p in stats.top_posts %}
+      <tr><td>{{ loop.index }}</td><td><a href="{{ url_for('main.post_view', post_id=p.id) }}">{{ p.title }}</a></td><td>{{ p.author }}</td><td>{{ p.likes }}</td></tr>
+    {% else %}<tr><td colspan="4">Немає даних</td></tr>{% endfor %}
+    </table>
+  </section>
+  <section>
+    <h2>Пости по днях (останні 7 днів)</h2>
+    <table><tr><th>Дата</th><th>Постів</th></tr>
+    {% for d in stats.per_day %}<tr><td>{{ d.day.strftime('%d.%m.%Y') }}</td><td>{{ d.posts }}</td></tr>{% endfor %}
+    </table>
+  </section>
+  <section>
+    <h2>Топ-3 автори за кількістю постів</h2>
+    <table><tr><th>#</th><th>Автор</th><th>Постів</th></tr>
+    {% for a in stats.top_authors %}<tr><td>{{ loop.index }}</td><td>{{ a.username }}</td><td>{{ a.posts }}</td></tr>
+    {% else %}<tr><td colspan="3">Немає даних</td></tr>{% endfor %}
+    </table>
+  </section>
+</div>
+{% endblock %}

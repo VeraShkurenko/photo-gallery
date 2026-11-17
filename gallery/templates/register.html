@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Реєстрація{% endblock %}
+{% block content %}
+<form class="box" method="post">
+  <h1>Реєстрація</h1>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Ім'я користувача <small>(3–30 символів: латиниця, цифри, _)</small>
+    <input name="username" value="{{ username }}" required></label>
+  <label>Пароль <small>(мінімум 8 символів)</small>
+    <input type="password" name="password" required></label>
+  <button type="submit">Зареєструватися</button>
+  <p>Вже є обліковий запис? <a href="{{ url_for('main.login') }}">Увійти</a></p>
+</form>
+{% endblock %}

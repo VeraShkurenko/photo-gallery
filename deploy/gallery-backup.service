@@ -1,0 +1,8 @@
+[Unit]
+Description=Gallery: mysqldump of database gallery to S3
+After=mysql.service
+Requires=mysql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gallery-backup

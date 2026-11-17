@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Новий пост{% endblock %}
+{% block content %}
+<form class="box wide" method="post" enctype="multipart/form-data">
+  <h1>Новий пост</h1>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Назва <small>(3–100 символів)</small>
+    <input name="title" value="{{ form.title }}" required></label>
+  <label>Опис <small>(до 1000 символів)</small>
+    <textarea name="description" rows="5">{{ form.description }}</textarea></label>
+  <label>Категорія
+    <select name="category_id" required>
+      <option value="">— оберіть —</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if form.category_id == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select></label>
+  <label>Зображення <small>(jpg, png, webp, до 5 МБ)</small>
+    <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" required></label>
+  {% if current_user.role != 'admin' %}<p class="hint">Пост з'явиться на головній після схвалення адміністратором.</p>{% endif %}
+  <button type="submit">Опублікувати</button>
+</form>
+{% endblock %}

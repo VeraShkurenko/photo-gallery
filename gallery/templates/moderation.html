@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Модерація{% endblock %}
+{% block content %}
+<h1>Модерація: пости pending ({{ posts|length }})</h1>
+{% for p in posts %}
+<div class="mod-row">
+  <img src="{{ image_url(p.s3_key) }}" alt="">
+  <div>
+    <a href="{{ url_for('main.post_view', post_id=p.id) }}"><b>#{{ p.id }} {{ p.title }}</b></a>
+    <div class="meta">{{ p.author }} · {{ p.category }} · {{ p.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+  </div>
+  <form method="post" action="{{ url_for('main.approve', post_id=p.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit">Схвалити</button>
+  </form>
+</div>
+{% else %}<p class="empty">Немає постів, що очікують на модерацію.</p>{% endfor %}
+{% endblock %}
